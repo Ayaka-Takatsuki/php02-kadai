@@ -15,7 +15,7 @@ try {
   exit('DBConnection Error:'.$e->getMessage());
 }
 
-
+///test
 //３．データ登録SQL作成
 $stmt = $pdo->prepare("INSERT INTO gs_bm_table(bookname,url,comment,indate)VALUES(:bookname, :url, :comment, sysdate());");
 $stmt->bindValue(':bookname', $bookname, PDO::PARAM_STR);  //Integer（数値の場合 PDO::PARAM_INT)
