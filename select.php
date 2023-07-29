@@ -1,31 +1,30 @@
 <?php
 //1.  DB接続します
-try {
-  //Password:MAMP='root',XAMPP=''
-  $pdo = new PDO('*******:dbname=****;charset=utf8;host=*****','****','*****');
-} catch (PDOException $e) {
-  exit('***************'.$e->getMessage());
-}
+include("funcs.php");  //funcs.phpを読み込む（関数群）
+$pdo = db_conn();      //DB接続関数
 
 //２．データ登録SQL作成
-$stmt = $pdo->prepare("************* *****");
-$status = $stmt->execute();
+$stmt   = $pdo->prepare("SELECT * FROM gs_bm_table"); //SQLをセット
+$status = $stmt->execute(); //SQLを実行→エラーの場合falseを$statusに代入
 
 //３．データ表示
-$view="";
+$view="";//HTML文字列作り、入れる変数
 if($status==false) {
     //execute（SQL実行時にエラーがある場合）
-  $error = $stmt->errorInfo();
-  exit("**********:".$error[2]);
-
-}else{
-  //Selectデータの数だけ自動でループしてくれる
-  //FETCH_ASSOC=http://php.net/manual/ja/pdostatement.fetch.php
-  while( $res = $stmt->fetch(PDO::FETCH_ASSOC)){
-    $view .= "**********";
+    sql_error($stmt);
+  }else{
+    //SQL成功の場合
+    while( $r = $stmt->fetch(PDO::FETCH_ASSOC)){ //データ取得数分繰り返す
+      //以下でリンクの文字列を作成, $r["id"]でidをbm_update_view.phpに渡しています
+      $view .= '<a href="bm_update_view.php?id='.h($r["id"]).'">';
+      $view .= h($r["id"])."|".h($r["bookname"])."|".h($r["url"]);  //ここurlも必要？
+      $view .= '</a>';
+      $view .= '<a href="delete.php?id='.h($r["id"]).'">';
+      $view .= '[削除]';
+      $view .= '</a>';
+      $view .= '<br>';
+    }
   }
-
-}
 ?>
 
 
@@ -55,7 +54,7 @@ if($status==false) {
 
 <!-- Main[Start] -->
 <div>
-    <div class="container jumbotron"><?=**********?></div>
+    <div class="container jumbotron"><?=$view?></div>
 </div>
 <!-- Main[End] -->
 
